@@ -1,15 +1,18 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Body
 from fastapi.responses import JSONResponse
 import schema, math, geopandas as gpd
 from shapely import Polygon, LineString
 import utils
+from typing import Annotated
 
 
 mission_planner_router = APIRouter()
 
 
-@mission_planner_router.post("/mission")
-async def get_waypoints_for_AOI(data: schema.MissionParameters, req: Request):
+@mission_planner_router.post("/mission", response_model=schema.MissionResponse)
+async def get_waypoints_for_AOI(data:
+        schema.MissionParameters
+    ):
 
     fov = float(data.FOV) * (3.14 / 180)  # Convert to radians
     image_height = data.ImageHeight
@@ -17,7 +20,7 @@ async def get_waypoints_for_AOI(data: schema.MissionParameters, req: Request):
     overlap = data.Overlap
     r = image_width / image_height
     drone_speed = data.Speed
-    polygon_coords = data.AOI['coordinates']
+    polygon_coords = data.AOI['coordinates'][0]
     alt= data.Altitude
 
     D = (
@@ -72,4 +75,4 @@ async def get_waypoints_for_AOI(data: schema.MissionParameters, req: Request):
     utils.write_waypoints_to_kml("small.kml", waypoints=waypoints, altitude=alt)
 
 
-    return JSONResponse(content=utils.waypoints_to_linestring(waypoints))
+    return JSONResponse(content=utils.waypoints_to_linestring(waypoints, time_interval=time_interval))

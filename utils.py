@@ -219,10 +219,11 @@ def write_waypoints_to_kml(filename, waypoints, altitude):
         f.write("</kml>\n")
 
 
-def waypoints_to_linestring(waypoints):
+def waypoints_to_linestring(waypoints, time_interval):
     linestring = LineString(waypoints)
     return {
         "type": "Feature",
+        "time_interval":time_interval,
         "properties": {},
         "geometry": {
             "type": "LineString",

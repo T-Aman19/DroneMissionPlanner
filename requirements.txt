@@ -1,0 +1,4 @@
+fastapi[all]==0.95.0
+shapely==2.0.2
+geopandas==0.14.2
+uvicorn==0.21.1
